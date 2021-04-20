@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchGalleryActivity">
+
+    <EditText
+        android:id="@+id/startDate"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="@string/startDate"
+        android:inputType="date"
+        app:layout_constraintEnd_toStartOf="@+id/endDate"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/SearchMenuButton"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:text="@string/search_button"
+        app:layout_constraintBaseline_toBaselineOf="@+id/startDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/endDate" />
+
+    <EditText
+        android:id="@+id/endDate"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:ems="10"
+        android:hint="@string/endDate"
+        android:inputType="date"
+        app:layout_constraintBaseline_toBaselineOf="@+id/startDate"
+        app:layout_constraintEnd_toStartOf="@+id/SearchMenuButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/startDate" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
