@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -25,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="37dp"
         android:text="@string/left_button"
+        android:onClick="leftClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/snapButton"
         app:layout_constraintHorizontal_bias="0.5"
@@ -38,6 +40,7 @@
         android:layout_marginLeft="32dp"
         android:layout_marginBottom="37dp"
         android:text="@string/right_button"
+        android:onClick="rightClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
