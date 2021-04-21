@@ -24,3 +24,4 @@ public class ExampleInstrumentedTest {
         assertEquals("com.example.galleryapp7082", appContext.getPackageName());
     }
 }
+
