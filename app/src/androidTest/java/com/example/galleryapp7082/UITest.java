@@ -12,6 +12,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -25,6 +26,7 @@ public class UITest {
         onView(withId(R.id.startDate)).perform(typeText("1"));
         onView(withId(R.id.endDate)).perform(typeText("2"));
         onView(withId(R.id.SearchMenuButton)).perform(click());
+        assertEquals(4, 2 + 3);
 
 //        onView(withId(R.id.btnSearch)).perform(click());
 //        onView(withId(R.id.etFromDateTime)).perform(typeText(""), closeSoftKeyboard());
