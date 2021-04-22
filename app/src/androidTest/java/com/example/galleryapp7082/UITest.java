@@ -1,12 +1,12 @@
 package com.example.galleryapp7082;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -36,5 +36,49 @@ public class UITest {
 //        onView(withId(R.id.etCaption)).check(matches(withText("caption")));
 //        onView(withId(R.id.btnRight)).perform(click());
 //        onView(withId(R.id.btnLeft)).perform(click());
+    }
+
+    @Test
+    public void testSearch(){
+        onView(withId(R.id.searchButton)).perform(click());
+        onView(withId(R.id.keyWord)).perform(click());
+        onView(withId(R.id.keyWord)).perform(typeText("23:12"));
+        onView(withId(R.id.SearchMenuButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+//        assertEquals(3, 3);
+
+    }
+
+    @Test
+    public void testSearch2(){
+        onView(withId(R.id.searchButton)).perform(click());
+        onView(withId(R.id.keyWord)).perform(click());
+        onView(withId(R.id.keyWord)).perform(typeText("23:36"));
+        onView(withId(R.id.SearchMenuButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+//        assertEquals(2, 2);
+
+    }
+
+    @Test
+    public void testSearch3(){
+        onView(withId(R.id.searchButton)).perform(click());
+        onView(withId(R.id.startDate)).perform(click());
+        onView(withId(R.id.startDate)).perform(typeText("23:10:00"));
+        onView(withId(R.id.endDate)).perform(click());
+        onView(withId(R.id.endDate)).perform(typeText("24:00:00"));
+        onView(withId(R.id.SearchMenuButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+//        assertEquals(2, 2);
+
     }
 }

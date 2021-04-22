@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -44,10 +45,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private int currentImageIndex;
     private TextView textView;
+    private TextView timestamp;
     private EditText captionEditText;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private LocalDate time;
+    String currTime = null ;
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
+    public static final int NEW_TIME_ACTIVITY_REQUEST_CODE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         captionEditText = findViewById(R.id.editCaption);
         textView = findViewById(R.id.textView);
         imageView = findViewById(R.id.imageView);
+        timestamp = findViewById(R.id.timeTextView);
         currentImageIndex = 0;
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
@@ -121,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("yo", "FileName:" + filesArray[i].getName());
                 }
             }
+            if(filesArray.length > 0 && currTime != null) {
+                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
+                editor.apply();
+            }
 //            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
@@ -130,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     public void setCaptionView(){
 //        Log.d("yo", "ran");
         textView.setText(sharedPref.getString(files.get(currentImageIndex).getName(), null));
+        timestamp.setText(sharedPref.getString(files.get(currentImageIndex).getName() + 1, null));
 
     }
     public ArrayList<File> getFiles(String filter){
@@ -144,13 +155,48 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(imgFile.exists()){
-            for (int i = 0; i < filesArray.length; i++){
+            for (int i = filesArray.length-1; i >= 0; i--){
                 if(filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")){
                     if(filesArray[i].getName().contains(filter)){
                         files.add(filesArray[i]);
                         Log.d("yo", "FileName:" + filesArray[i].getName());
                     }
                 }
+            }
+            if(filesArray.length > 0 && currTime != null) {
+                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
+                editor.apply();
+            }
+//            Log.d("yo", "Size: "+ files.size());
+        }
+        currentImageIndex = 0;
+        setImageView(0);
+        return files;
+    }
+
+    public ArrayList<File> getFiles(String beforeTime, String afterTime){
+        File[] filesArray;
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
+
+        files.clear();
+
+//        Log.d("yo", "STRING FILTER");
+        File imgFile = new File(path);
+        filesArray = imgFile.listFiles();
+
+
+        if(imgFile.exists()){
+            for (int i = filesArray.length-1; i >= 0; i--){
+                if(filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")){
+                    if(filesArray[i].getName().contains(beforeTime)){
+                        files.add(filesArray[i]);
+                        Log.d("yo", "FileName:" + filesArray[i].getName());
+                    }
+                }
+            }
+            if(filesArray.length > 0 && currTime != null) {
+                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
+                editor.apply();
             }
 //            Log.d("yo", "Size: "+ files.size());
         }
@@ -173,8 +219,11 @@ public class MainActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        currTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        Log.d("josh", currTime);
+
+        String imageFileName = currTime + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -204,6 +253,9 @@ public class MainActivity extends AppCompatActivity {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
                         photoFile);
+//                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
+//                editor.apply();
+                Log.d("JOSH", currTime);
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -217,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+
             String word = (data.getStringExtra(SearchGalleryActivity.EXTRA_REPLY));
             getFiles(word);
         }
@@ -224,7 +277,9 @@ public class MainActivity extends AppCompatActivity {
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            imageView.setImageBitmap(imageBitmap);
+
             getFiles();
+
         }
 
 
@@ -267,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
 //        Log.d("yo", String.valueOf(captionEditText.getText()));
         editor.putString(files.get(currentImageIndex).getName(), captionEditText.getText().toString());
         editor.apply();
+
         captionEditText.setText("");
         setCaptionView();
     }
