@@ -1,28 +1,38 @@
 package com.example.galleryapp7082;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+
+    static final int REQUEST_IMAGE_CAPTURE = 2;
+    private ImageView photoImageView;
+    String currentPhotoPath = null;
 
     private static final int MY_READ_PERMISSION_CODE = 101;
     private final ArrayList<File> files = new ArrayList<>();
@@ -35,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        photoImageView = findViewById(R.id.imageView);
         mLayout = findViewById(R.id.main_layout);
         imageView = findViewById(R.id.imageView);
         currentImageIndex = 0;
@@ -83,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public ArrayList<File> getFiles(){
         File[] filesArray;
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         files.clear();
 
         Log.d("yo", path);
@@ -105,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public ArrayList<File> getFiles(String filter){
         File[] filesArray;
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
 
         files.clear();
 
@@ -141,12 +152,96 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SearchGalleryActivity.class );
         startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
     }
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+
+    public void takePhoto(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Error with something", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             String word = (data.getStringExtra(SearchGalleryActivity.EXTRA_REPLY));
             getFiles(word);
         }
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            imageView.setImageBitmap(imageBitmap);
+            getFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
+        }
+
+
+//            BitmapDrawable drawable = (BitmapDrawable) photoImageView.getDrawable();
+//            Bitmap bitmap = drawable.getBitmap();
+//
+//            File sdCardDirectory = Environment.getExternalStorageDirectory();
+//            File image = new File(sdCardDirectory, extras.get("data").toString());
+//
+//            boolean success = false;
+//
+//            // Encode the file as a PNG image.
+//            FileOutputStream outStream;
+//            try {
+//
+//                outStream = new FileOutputStream(image);
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+//                /* 100 to keep full quality of the image */
+//
+//                outStream.flush();
+//                outStream.close();
+//                success = true;
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+//            if (success) {
+//                Toast.makeText(getApplicationContext(), "Image saved with success",
+//                        Toast.LENGTH_LONG).show();
+//                photoImageView.setImageBitmap(imageBitmap);
+//            } else {
+//                Toast.makeText(getApplicationContext(),
+//                        "Error during image saving", Toast.LENGTH_LONG).show();
+//            }
     }
 }
