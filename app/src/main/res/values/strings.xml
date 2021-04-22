@@ -3,6 +3,7 @@
     <string name="left_button">Left</string>
     <string name="right_button">Right</string>
     <string name="snap_button">Snap</string>
+    <string name="captionText">Type your caption here!</string>
     <string name="search_button">Search</string>
     <string name="startDate">Start Date</string>
     <string name="endDate">End Date</string>

@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         filesArray = imgFile.listFiles();
 
         if(imgFile.exists()){
-            for (int i = 0; i < filesArray.length; i++){
+            for (int i = filesArray.length-1; i >= 0; i--){
                 if(filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")){
                     files.add(filesArray[i]);
                     Log.d("yo", "FileName:" + filesArray[i].getName());
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            imageView.setImageBitmap(imageBitmap);
-            getFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
+            getFiles();
         }
 
 
@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
 //        Log.d("yo", String.valueOf(captionEditText.getText()));
         editor.putString(files.get(currentImageIndex).getName(), captionEditText.getText().toString());
         editor.apply();
+        captionEditText.setText("");
         setCaptionView();
     }
 }
