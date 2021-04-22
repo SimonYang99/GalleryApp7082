@@ -71,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
         if(currentImageIndex + next < files.size() && currentImageIndex + next >= 0){
             if(files.size() > 0){
                 Log.d("yo", "currentImage: "+ currentImageIndex);
+                currentImageIndex += next;
                 Bitmap myBitmap = BitmapFactory.decodeFile(files.get(currentImageIndex).getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);
-                currentImageIndex += next;
                 Log.d("yo", "currentImage: "+ currentImageIndex);
             } else{
                 imageView.setImageBitmap(null);
