@@ -6,7 +6,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +16,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -29,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private View mLayout;
     private ImageView imageView;
     private int currentImageIndex;
+    private TextView textView;
+    private EditText captionEditText;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
 
     @Override
@@ -36,8 +44,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLayout = findViewById(R.id.main_layout);
+        captionEditText = findViewById(R.id.editCaption);
+        textView = findViewById(R.id.textView);
         imageView = findViewById(R.id.imageView);
         currentImageIndex = 0;
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
@@ -70,11 +82,12 @@ public class MainActivity extends AppCompatActivity {
     private void setImageView(int next){
         if(currentImageIndex + next < files.size() && currentImageIndex + next >= 0){
             if(files.size() > 0){
-                Log.d("yo", "currentImage: "+ currentImageIndex);
+//                Log.d("yo", "currentImage: "+ currentImageIndex);
+                currentImageIndex += next;
+                setCaptionView();
                 Bitmap myBitmap = BitmapFactory.decodeFile(files.get(currentImageIndex).getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);
-                currentImageIndex += next;
-                Log.d("yo", "currentImage: "+ currentImageIndex);
+//                Log.d("yo", "currentImage: "+ currentImageIndex);
             } else{
                 imageView.setImageBitmap(null);
             }
@@ -86,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
         files.clear();
 
-        Log.d("yo", path);
+//        Log.d("yo", path);
         File imgFile = new File(path);
         filesArray = imgFile.listFiles();
 
@@ -97,11 +110,16 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("yo", "FileName:" + filesArray[i].getName());
                 }
             }
-            Log.d("yo", "Size: "+ files.size());
+//            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
         setImageView(0);
         return files;
+    }
+    public void setCaptionView(){
+//        Log.d("yo", "ran");
+        textView.setText(sharedPref.getString(files.get(currentImageIndex).getName(), null));
+
     }
     public ArrayList<File> getFiles(String filter){
         File[] filesArray;
@@ -109,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         files.clear();
 
-        Log.d("yo", "STRING FILTER");
+//        Log.d("yo", "STRING FILTER");
         File imgFile = new File(path);
         filesArray = imgFile.listFiles();
 
@@ -123,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            Log.d("yo", "Size: "+ files.size());
+//            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
         setImageView(0);
@@ -148,5 +166,12 @@ public class MainActivity extends AppCompatActivity {
             String word = (data.getStringExtra(SearchGalleryActivity.EXTRA_REPLY));
             getFiles(word);
         }
+    }
+
+    public void saveCaption(View view) {
+//        Log.d("yo", String.valueOf(captionEditText.getText()));
+        editor.putString(files.get(currentImageIndex).getName(), captionEditText.getText().toString());
+        editor.apply();
+        setCaptionView();
     }
 }
