@@ -8,6 +8,19 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/Share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/share_button"
+        android:onClick="onShare"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
         android:id="@+id/snapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,11 +74,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="365dp"
-        android:layout_height="403dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="364dp"
+        android:layout_height="368dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_background"
@@ -75,8 +88,8 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginTop="12dp"
         android:hint=""
         app:layout_constraintStart_toStartOf="parent"
@@ -90,7 +103,7 @@
         android:hint="timestamp"
         app:layout_constraintBottom_toTopOf="@+id/captionButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.953"
+        app:layout_constraintHorizontal_bias="0.927"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.0" />
@@ -99,26 +112,26 @@
         android:id="@+id/editCaption"
         android:layout_width="222dp"
         android:layout_height="45dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="@string/captionText"
+        android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/searchButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.712" />
 
     <Button
         android:id="@+id/captionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="20dp"
         android:onClick="saveCaption"
         android:text="save"
         app:layout_constraintBottom_toTopOf="@+id/searchButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.545" />
+        app:layout_constraintHorizontal_bias="0.657"
+        app:layout_constraintStart_toEndOf="@+id/editCaption" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
