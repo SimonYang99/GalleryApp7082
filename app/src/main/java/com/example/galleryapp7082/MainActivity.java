@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
     public static final int NEW_TIME_ACTIVITY_REQUEST_CODE = 3;
 
+    //test
+    private ImageManager manager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
 
+        manager = new ImageManager(textView, timestamp, imageView);
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
         } else {
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onShare(View view) {
+        manager.printImageList();
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         Uri uri = FileProvider.getUriForFile(this,
                 "com.example.android.fileprovider", files.get(currentImageIndex));
@@ -136,7 +142,12 @@ public class MainActivity extends AppCompatActivity {
             for (int i = filesArray.length - 1; i >= 0; i--) {
                 if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
                     files.add(filesArray[i]);
-                    Log.d("yo", "FileName:" + filesArray[i].getName());
+                    ImageInterface img = new Image(filesArray[i],
+                            sharedPref.getString(filesArray[i].getName(), null),
+                            sharedPref.getString(filesArray[i].getName() + 1, null),
+                            editor);
+                    manager.imageList.add(img);
+//                    Log.d("yo", "FileName:" + filesArray[i].getName());
                 }
             }
             if (filesArray.length > 0 && currTime != null) {
@@ -146,14 +157,16 @@ public class MainActivity extends AppCompatActivity {
 //            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
-        setImageView(0);
+//        setImageView(0);
+        manager.nextImage(0);
         return files;
     }
 
     public void setCaptionView() {
 //        Log.d("yo", "ran");
-        textView.setText(sharedPref.getString(files.get(currentImageIndex).getName(), null));
-        timestamp.setText(sharedPref.getString(files.get(currentImageIndex).getName() + 1, null));
+//        textView.setText(sharedPref.getString(files.get(currentImageIndex).getName(), null));
+//        timestamp.setText(sharedPref.getString(files.get(currentImageIndex).getName() + 1, null));
+        manager.updateViewInfo();
 
     }
 
@@ -173,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
                     if (filesArray[i].getName().contains(filter)) {
                         files.add(filesArray[i]);
-                        Log.d("yo", "FileName:" + filesArray[i].getName());
+//                        Log.d("yo", "FileName:" + filesArray[i].getName());
                     }
                 }
             }
@@ -220,11 +233,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void leftClicked(View view) {
-        setImageView(-1);
+//        setImageView(-1);
+        manager.nextImage(-1);
     }
 
     public void rightClicked(View view) {
-        setImageView(+1);
+//        setImageView(+1);
+        manager.nextImage(+1);
     }
 
     public void searchButton(View view) {
@@ -334,10 +349,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveCaption(View view) {
 //        Log.d("yo", String.valueOf(captionEditText.getText()));
-        editor.putString(files.get(currentImageIndex).getName(), captionEditText.getText().toString());
-        editor.apply();
+//        editor.putString(files.get(currentImageIndex).getName(), captionEditText.getText().toString());
+//        editor.apply();
 
+        manager.getCurrentImage().setCaption(captionEditText.getText().toString());
         captionEditText.setText("");
         setCaptionView();
+
     }
 }
