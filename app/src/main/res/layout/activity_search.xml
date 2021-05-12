@@ -20,51 +20,140 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.18" />
 
+    <TextView
+        android:id="@+id/DateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="88dp"
+        android:text="Date Search"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/startDate"
         android:layout_width="108dp"
         android:layout_height="46dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="@string/startDate"
         android:inputType="date"
-        app:layout_constraintEnd_toStartOf="@+id/endDate"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/SearchMenuButton"
-        android:layout_width="108dp"
-        android:layout_height="46dp"
-        android:text="@string/search_button"
-        app:layout_constraintBaseline_toBaselineOf="@+id/startDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/endDate" />
+        app:layout_constraintTop_toBottomOf="@+id/DateTextView" />
 
     <EditText
         android:id="@+id/endDate"
         android:layout_width="108dp"
         android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="@string/endDate"
         android:inputType="date"
-        app:layout_constraintBaseline_toBaselineOf="@+id/startDate"
         app:layout_constraintEnd_toStartOf="@+id/SearchMenuButton"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/startDate" />
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toEndOf="@+id/startDate"
+        app:layout_constraintTop_toBottomOf="@+id/DateTextView" />
+
+    <Button
+        android:id="@+id/SearchMenuButton"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/search_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/DateTextView" />
+
+    <TextView
+        android:id="@+id/KeywordTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="92dp"
+        android:text="Keyword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/DateTextView" />
+
+    <Button
+        android:id="@+id/SearchKeyword"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/search_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.929"
+        app:layout_constraintStart_toEndOf="@+id/KeywordTextView"
+        app:layout_constraintTop_toBottomOf="@+id/KeywordTextView" />
+
+    <Button
+        android:id="@+id/searchLocation"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/search_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LocationSearch" />
+
     <EditText
-        android:id="@+id/keyWord"
+        android:id="@+id/LongitudeEditText"
+        android:layout_width="120dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="28dp"
+        android:ems="10"
+        android:hint="Longitude"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LocationSearch" />
+
+    <EditText
+        android:id="@+id/LatitudeEditText"
+        android:layout_width="120dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="28dp"
+        android:ems="10"
+        android:hint="Latitude"
+        android:inputType="text"
+        app:layout_constraintEnd_toStartOf="@+id/searchLocation"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toEndOf="@+id/LongitudeEditText"
+        app:layout_constraintTop_toBottomOf="@+id/LocationSearch" />
+
+    <EditText
+        android:id="@+id/keyWordEditText"
         android:layout_width="250dp"
         android:layout_height="46dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="@string/keyWord"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.136"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startDate" />
+        app:layout_constraintTop_toBottomOf="@+id/KeywordTextView" />
+
+    <TextView
+        android:id="@+id/LocationSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="88dp"
+        android:text="Location Search"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/KeywordTextView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

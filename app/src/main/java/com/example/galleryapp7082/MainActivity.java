@@ -1,12 +1,14 @@
 package com.example.galleryapp7082;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +26,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     String currentPhotoPath = null;
 
     private static final int MY_READ_PERMISSION_CODE = 101;
+    private static final int MY_READ_LOCATION_CODE = 102;
     private final ArrayList<File> files = new ArrayList<>();
     private View mLayout;
     private ImageView imageView;
@@ -52,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private LocalDate time;
     String currTime = null;
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
-    public static final int NEW_TIME_ACTIVITY_REQUEST_CODE = 3;
+
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     //test
     private ImageManager manager;
@@ -71,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         manager = new ImageManager(textView, timestamp, imageView);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -78,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getFiles();
         }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
+        }
+
     }
 
     public void onShare(View view) {
@@ -102,39 +116,40 @@ public class MainActivity extends AppCompatActivity {
                         Snackbar.LENGTH_SHORT)
                         .show();
                 getFiles();
-                setImageView(0);
             } else {
                 // Permission request was denied.
                 Snackbar.make(mLayout, "denied",
                         Snackbar.LENGTH_SHORT)
                         .show();
             }
+        }else if (requestCode == MY_READ_LOCATION_CODE){
+
         }
         // END_INCLUDE(onRequestPermissionsResult)
     }
 
-    private void setImageView(int next) {
-        if (currentImageIndex + next < files.size() && currentImageIndex + next >= 0) {
-            if (files.size() > 0) {
-//                Log.d("yo", "currentImage: "+ currentImageIndex);
-                currentImageIndex += next;
-                setCaptionView();
-                Bitmap myBitmap = BitmapFactory.decodeFile(files.get(currentImageIndex).getAbsolutePath());
-                imageView.setImageBitmap(myBitmap);
-//                Log.d("yo", "currentImage: "+ currentImageIndex);
-            } else {
-                imageView.setImageBitmap(null);
-            }
-
-        }
-    }
+//    private void setImageView(int next) {
+//        if (currentImageIndex + next < files.size() && currentImageIndex + next >= 0) {
+//            if (files.size() > 0) {
+////                Log.d("yo", "currentImage: "+ currentImageIndex);
+//                currentImageIndex += next;
+//                setCaptionView();
+//                Bitmap myBitmap = BitmapFactory.decodeFile(files.get(currentImageIndex).getAbsolutePath());
+//                imageView.setImageBitmap(myBitmap);
+////                Log.d("yo", "currentImage: "+ currentImageIndex);
+//            } else {
+//                imageView.setImageBitmap(null);
+//            }
+//
+//        }
+//    }
 
     public ArrayList<File> getFiles() {
         File[] filesArray;
         String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         files.clear();
+        manager.clearImages();
 
-//        Log.d("yo", path);
         File imgFile = new File(path);
         filesArray = imgFile.listFiles();
 
@@ -144,60 +159,41 @@ public class MainActivity extends AppCompatActivity {
                     files.add(filesArray[i]);
                     ImageInterface img = new Image(filesArray[i],
                             sharedPref.getString(filesArray[i].getName(), null),
-                            sharedPref.getString(filesArray[i].getName() + 1, null),
+                            sharedPref.getString(filesArray[i].getName() + "_time", null),
                             editor);
                     manager.imageList.add(img);
-//                    Log.d("yo", "FileName:" + filesArray[i].getName());
                 }
             }
-            if (filesArray.length > 0 && currTime != null) {
-                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
-                editor.apply();
-            }
-//            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
-//        setImageView(0);
         manager.nextImage(0);
         return files;
-    }
-
-    public void setCaptionView() {
-//        Log.d("yo", "ran");
-//        textView.setText(sharedPref.getString(files.get(currentImageIndex).getName(), null));
-//        timestamp.setText(sharedPref.getString(files.get(currentImageIndex).getName() + 1, null));
-        manager.updateViewInfo();
-
     }
 
     public ArrayList<File> getFiles(String filter) {
         File[] filesArray;
         String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
-
         files.clear();
+        manager.clearImages();
 
-//        Log.d("yo", "STRING FILTER");
         File imgFile = new File(path);
         filesArray = imgFile.listFiles();
 
-
         if (imgFile.exists()) {
             for (int i = filesArray.length - 1; i >= 0; i--) {
-                if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
-                    if (filesArray[i].getName().contains(filter)) {
-                        files.add(filesArray[i]);
-//                        Log.d("yo", "FileName:" + filesArray[i].getName());
-                    }
+                if (filesArray[i].getName().contains(filter)) {
+                    files.add(filesArray[i]);
+                    ImageInterface img = new Image(filesArray[i],
+                            sharedPref.getString(filesArray[i].getName(), null),
+                            sharedPref.getString(filesArray[i].getName() + "_time", null),
+                            editor);
+                    manager.imageList.add(img);
+
                 }
             }
-            if (filesArray.length > 0 && currTime != null) {
-                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
-                editor.apply();
-            }
-//            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
-        setImageView(0);
+        manager.nextImage(0);
         return files;
     }
 
@@ -206,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
         String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
 
         files.clear();
+        manager.clearImages();
 
-//        Log.d("yo", "STRING FILTER");
         File imgFile = new File(path);
         filesArray = imgFile.listFiles();
 
@@ -215,30 +211,70 @@ public class MainActivity extends AppCompatActivity {
         if (imgFile.exists()) {
             for (int i = filesArray.length - 1; i >= 0; i--) {
                 if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
-                    if (filesArray[i].getName().contains(beforeTime)) {
-                        files.add(filesArray[i]);
-                        Log.d("yo", "FileName:" + filesArray[i].getName());
+                    if (sharedPref.getString(filesArray[i].getName() + "_time", null) != null) {
+                        if (sharedPref.getString(filesArray[i].getName() + "_time", null).compareTo(beforeTime) == 1 && sharedPref.getString(filesArray[i].getName() + "_time", null).compareTo(afterTime) == 0)  {
+                            files.add(filesArray[i]);
+                            ImageInterface img = new Image(filesArray[i],
+                                    sharedPref.getString(filesArray[i].getName(), null),
+                                    sharedPref.getString(filesArray[i].getName() + "_time", null),
+                                    editor);
+                            manager.imageList.add(img);
+                        }
                     }
                 }
             }
-            if (filesArray.length > 0 && currTime != null) {
-                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
-                editor.apply();
-            }
-//            Log.d("yo", "Size: "+ files.size());
         }
         currentImageIndex = 0;
-        setImageView(0);
+        manager.nextImage(0);
         return files;
     }
 
+    public ArrayList<File> getFilesLocationFilter(String longitude, String latitude) {
+        File[] filesArray;
+        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
+
+        files.clear();
+        manager.clearImages();
+
+        File imgFile = new File(path);
+        filesArray = imgFile.listFiles();
+
+
+        if (imgFile.exists()) {
+            for (int i = filesArray.length - 1; i >= 0; i--) {
+                if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
+                    Log.d("josh", "long" + sharedPref.getString(filesArray[i].getName() + "_longitude", null));
+                    Log.d("josh", "lat" + sharedPref.getString(filesArray[i].getName() + "_latitude", null));
+                    if(sharedPref.getString(filesArray[i].getName() + "_longitude", null) != null
+                            && sharedPref.getString(filesArray[i].getName() + "_latitude", null) !=null){
+                        if(sharedPref.getString(filesArray[i].getName() + "_longitude", null).startsWith(longitude)
+                                && sharedPref.getString(filesArray[i].getName() + "_latitude", null).startsWith(latitude)){
+                            files.add(filesArray[i]);
+                            ImageInterface img = new Image(filesArray[i],
+                                    sharedPref.getString(filesArray[i].getName(), null),
+                                    sharedPref.getString(filesArray[i].getName() + "_time", null),
+                                    editor);
+                            manager.imageList.add(img);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        currentImageIndex = 0;
+        manager.nextImage(0);
+        return files;
+    }
+    public void setCaptionView() {
+        manager.updateViewInfo();
+    }
+
     public void leftClicked(View view) {
-//        setImageView(-1);
         manager.nextImage(-1);
     }
 
     public void rightClicked(View view) {
-//        setImageView(+1);
         manager.nextImage(+1);
     }
 
@@ -248,10 +284,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private File createImageFile() throws IOException {
+
         // Create an image file name
         currTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-        Log.d("josh", currTime);
 
         String imageFileName = currTime + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -260,6 +295,30 @@ public class MainActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+
+        editor.putString(image.getName() + "_time", currTime);
+        editor.apply();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            editor.putString(image.getName() + "_latitude", String.valueOf(location.getLatitude()));
+                            editor.putString(image.getName() + "_longitude", String.valueOf(location.getLongitude()));
+                            editor.apply();
+                            Log.d("josh", "SUBMIT: " + sharedPref.getString(image.getName() + "_longitude", null));
+                            Log.d("josh", "SUBMIT: " + sharedPref.getString(image.getName() + "_latitude", null));
+                        }
+                        else{
+                            Log.d("josh", "LOCATION IS NULL");
+                        }
+                    }
+                });
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
@@ -274,7 +333,11 @@ public class MainActivity extends AppCompatActivity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
+                }else{
+                    photoFile = createImageFile();
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -285,7 +348,6 @@ public class MainActivity extends AppCompatActivity {
                         photoFile);
 //                editor.putString(files.get(currentImageIndex).getName() + 1, currTime);
 //                editor.apply();
-                Log.d("JOSH", currTime);
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -298,11 +360,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == SearchGalleryActivity.KEYWORD_RESULT) {
 
             String word = (data.getStringExtra(SearchGalleryActivity.EXTRA_REPLY));
             getFiles(word);
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        }
+        else if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == SearchGalleryActivity.TIME_RESULT) {
+            String word = (data.getStringExtra(SearchGalleryActivity.EXTRA_REPLY));
+            getFiles(word);
+        }
+        else if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == SearchGalleryActivity.LOCATION_RESULT) {
+
+            String longitude = (data.getStringExtra(SearchGalleryActivity.LONGITUDE_REPLY));
+            String latitude = (data.getStringExtra(SearchGalleryActivity.LATITUDE_REPLY));
+            getFilesLocationFilter(longitude, latitude);
+        }
+
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            imageView.setImageBitmap(imageBitmap);
@@ -311,47 +385,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
-//            BitmapDrawable drawable = (BitmapDrawable) photoImageView.getDrawable();
-//            Bitmap bitmap = drawable.getBitmap();
-//
-//            File sdCardDirectory = Environment.getExternalStorageDirectory();
-//            File image = new File(sdCardDirectory, extras.get("data").toString());
-//
-//            boolean success = false;
-//
-//            // Encode the file as a PNG image.
-//            FileOutputStream outStream;
-//            try {
-//
-//                outStream = new FileOutputStream(image);
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-//                /* 100 to keep full quality of the image */
-//
-//                outStream.flush();
-//                outStream.close();
-//                success = true;
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-//            if (success) {
-//                Toast.makeText(getApplicationContext(), "Image saved with success",
-//                        Toast.LENGTH_LONG).show();
-//                photoImageView.setImageBitmap(imageBitmap);
-//            } else {
-//                Toast.makeText(getApplicationContext(),
-//                        "Error during image saving", Toast.LENGTH_LONG).show();
-//            }
     }
 
     public void saveCaption(View view) {
-//        Log.d("yo", String.valueOf(captionEditText.getText()));
-//        editor.putString(files.get(currentImageIndex).getName(), captionEditText.getText().toString());
-//        editor.apply();
-
         manager.getCurrentImage().setCaption(captionEditText.getText().toString());
         captionEditText.setText("");
         setCaptionView();

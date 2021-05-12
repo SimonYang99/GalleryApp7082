@@ -21,6 +21,13 @@ public class ImageManager {
         this.timeView = timeView;
         this.imageView = imageView;
     }
+    public void clearImages() {
+        imageList = new ArrayList<>();
+        this.imageView.setImageBitmap(null);
+        this.textView.setText(null);
+        this.timeView.setText(null);
+
+    }
 
     public void nextImage(int next) {
         if(this.currentImageIndex + next < imageList.size() && this.currentImageIndex + next >= 0){
