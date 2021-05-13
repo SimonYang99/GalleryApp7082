@@ -3,11 +3,14 @@ package com.example.galleryapp7082;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.lang.reflect.Array;
 
 public class SearchGalleryActivity extends AppCompatActivity {
 
@@ -18,9 +21,13 @@ public class SearchGalleryActivity extends AppCompatActivity {
     private EditText Latitude;
     public static final String BEFORE_REPLY = "BEFORE_REPLY";
     public static final String AFTER_REPLY = "AFTER_REPLY";
-    public static final String KEYWORD_REPLY = "KEYWORD_REPLY";
+    public static final String EXTRA_REPLY = "KEYWORD_REPLY";
     public static final String LONGITUDE_REPLY = "LONG_REPLY";
     public static final String LATITUDE_REPLY = "LAT_REPLY";
+
+    public static final int TIME_RESULT = 201;
+    public static final int KEYWORD_RESULT = 202;
+    public static final int LOCATION_RESULT = 203;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +46,11 @@ public class SearchGalleryActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED, replyIntent);
             } else {
                 String before = beforeTime.getText().toString();
-                String after = afterTime.getText().toString();;
+                String after = afterTime.getText().toString();
 
                 replyIntent.putExtra(BEFORE_REPLY, before);
                 replyIntent.putExtra(AFTER_REPLY, after);
-                setResult(RESULT_OK, replyIntent);
+                setResult(TIME_RESULT, replyIntent);
             }
             finish();
         });
@@ -56,8 +63,8 @@ public class SearchGalleryActivity extends AppCompatActivity {
             } else {
                 String keyword = editTextKeyword.getText().toString();
 
-                replyIntent.putExtra(KEYWORD_REPLY, keyword);
-                setResult(RESULT_OK, replyIntent);
+                replyIntent.putExtra(EXTRA_REPLY, keyword);
+                setResult(KEYWORD_RESULT, replyIntent);
             }
             finish();
         });
@@ -73,7 +80,7 @@ public class SearchGalleryActivity extends AppCompatActivity {
 
                 replyIntent.putExtra(LONGITUDE_REPLY, longitudeString);
                 replyIntent.putExtra(LATITUDE_REPLY, latitudeString);
-                setResult(RESULT_OK, replyIntent);
+                setResult(LOCATION_RESULT, replyIntent);
             }
             finish();
         });
