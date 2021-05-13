@@ -11,33 +11,74 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SearchGalleryActivity extends AppCompatActivity {
 
-    private EditText editText;
+    private EditText editTextKeyword;
     private EditText beforeTime;
-    public static final String EXTRA_REPLY = "yo";
+    private EditText afterTime;
+    private EditText Longitude;
+    private EditText Latitude;
+    public static final String BEFORE_REPLY = "BEFORE_REPLY";
+    public static final String AFTER_REPLY = "AFTER_REPLY";
+    public static final String KEYWORD_REPLY = "KEYWORD_REPLY";
+    public static final String LONGITUDE_REPLY = "LONG_REPLY";
+    public static final String LATITUDE_REPLY = "LAT_REPLY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        editText = findViewById(R.id.keyWord);
+        editTextKeyword = findViewById(R.id.keyWordEditText);
         beforeTime = findViewById(R.id.startDate);
-        final Button button = findViewById(R.id.SearchMenuButton);
-        button.setOnClickListener(view -> {
+        afterTime = findViewById(R.id.endDate);
+        Longitude = findViewById(R.id.LongitudeEditText);
+        Latitude = findViewById(R.id.LatitudeEditText);
+
+        final Button DateButton = findViewById(R.id.SearchMenuButton);
+        DateButton.setOnClickListener(view -> {
             Intent replyIntent = new Intent();
-            if (TextUtils.isEmpty(editText.getText())) {
+            if (TextUtils.isEmpty(beforeTime.getText())) {
                 setResult(RESULT_CANCELED, replyIntent);
             } else {
-                String word = editText.getText().toString();
+                String before = beforeTime.getText().toString();
+                String after = afterTime.getText().toString();;
 
-                if(!beforeTime.getText().toString().isEmpty()) {
-                    word = beforeTime.getText().toString();
-                }
-                replyIntent.putExtra(EXTRA_REPLY, word);
+                replyIntent.putExtra(BEFORE_REPLY, before);
+                replyIntent.putExtra(AFTER_REPLY, after);
+                setResult(RESULT_OK, replyIntent);
+            }
+            finish();
+        });
+
+        final Button KeywordButton = findViewById(R.id.SearchKeyword);
+        KeywordButton.setOnClickListener(view -> {
+            Intent replyIntent = new Intent();
+            if (TextUtils.isEmpty(editTextKeyword.getText())) {
+                setResult(RESULT_CANCELED, replyIntent);
+            } else {
+                String keyword = editTextKeyword.getText().toString();
+
+                replyIntent.putExtra(KEYWORD_REPLY, keyword);
+                setResult(RESULT_OK, replyIntent);
+            }
+            finish();
+        });
+
+        final Button longLatButton = findViewById(R.id.searchLocation);
+        longLatButton.setOnClickListener(view -> {
+            Intent replyIntent = new Intent();
+            if (TextUtils.isEmpty(Longitude.getText()) || TextUtils.isEmpty(Latitude.getText())) {
+                setResult(RESULT_CANCELED, replyIntent);
+            } else {
+                String longitudeString = Longitude.getText().toString();
+                String latitudeString = Latitude.getText().toString();
+
+                replyIntent.putExtra(LONGITUDE_REPLY, longitudeString);
+                replyIntent.putExtra(LATITUDE_REPLY, latitudeString);
                 setResult(RESULT_OK, replyIntent);
             }
             finish();
         });
     }
+
 
     public void filterResults(View view) {
 

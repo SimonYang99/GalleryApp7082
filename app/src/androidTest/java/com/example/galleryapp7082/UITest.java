@@ -21,6 +21,31 @@ public class UITest {
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
+    public void searchLocation() {
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.searchButton)).perform(click());
+        onView(withId(R.id.LongitudeEditText)).perform(typeText("45.43"));
+        onView(withId(R.id.LatitudeEditText)).perform(typeText("-122.6"));
+        onView(withId(R.id.searchLocation)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.rightButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+        onView(withId(R.id.leftButton)).perform(click());
+    }
+
+    @Test
     public void openSearch(){
         onView(withId(R.id.searchButton)).perform(click());
         onView(withId(R.id.startDate)).perform(typeText("1"));
@@ -36,33 +61,6 @@ public class UITest {
 //        onView(withId(R.id.etCaption)).check(matches(withText("caption")));
 //        onView(withId(R.id.btnRight)).perform(click());
 //        onView(withId(R.id.btnLeft)).perform(click());
-    }
-
-    @Test
-    public void testSearch(){
-        onView(withId(R.id.searchButton)).perform(click());
-        onView(withId(R.id.keyWord)).perform(click());
-        onView(withId(R.id.keyWord)).perform(typeText("23:12"));
-        onView(withId(R.id.SearchMenuButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-//        assertEquals(3, 3);
-
-    }
-
-    @Test
-    public void testSearch2(){
-        onView(withId(R.id.searchButton)).perform(click());
-        onView(withId(R.id.keyWord)).perform(click());
-        onView(withId(R.id.keyWord)).perform(typeText("23:36"));
-        onView(withId(R.id.SearchMenuButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-        onView(withId(R.id.rightButton)).perform(click());
-//        assertEquals(2, 2);
-
     }
 
     @Test
