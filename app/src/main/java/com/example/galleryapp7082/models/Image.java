@@ -1,16 +1,16 @@
-package com.example.galleryapp7082;
+package com.example.galleryapp7082.models;
 
 import android.content.SharedPreferences;
 
 import java.io.File;
 
-public class Image implements ImageInterface{
+public class Image implements ImageInterface {
     private SharedPreferences.Editor editor;
     private File file;
     private String caption;
     private String date;
 
-    Image(File file, String caption, String date, SharedPreferences.Editor sd){
+    public Image(File file, String caption, String date, SharedPreferences.Editor sd){
         this.editor = sd;
         this.file = file;
         this.caption = caption;

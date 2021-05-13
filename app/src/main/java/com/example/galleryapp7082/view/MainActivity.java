@@ -1,13 +1,10 @@
-package com.example.galleryapp7082;
+package com.example.galleryapp7082.view;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +23,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.example.galleryapp7082.R;
+import com.example.galleryapp7082.models.Image;
+import com.example.galleryapp7082.models.ImageInterface;
+import com.example.galleryapp7082.presenter.MainActivityPresenter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //test
-    private ImageManager manager;
+    public MainActivityPresenter manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        manager = new ImageManager(textView, timestamp, imageView);
+        manager = new MainActivityPresenter(textView, timestamp, imageView);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);

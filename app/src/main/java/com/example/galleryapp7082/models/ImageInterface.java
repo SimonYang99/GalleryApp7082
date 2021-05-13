@@ -1,4 +1,4 @@
-package com.example.galleryapp7082;
+package com.example.galleryapp7082.models;
 
 import java.io.File;
 

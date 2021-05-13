@@ -1,12 +1,13 @@
 package com.example.galleryapp7082;
 
 import android.content.Context;
+
+import com.example.galleryapp7082.view.MainActivity;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
 
 import static org.mockito.Mockito.when;
 

@@ -1,22 +1,23 @@
-package com.example.galleryapp7082;
+package com.example.galleryapp7082.presenter;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.galleryapp7082.models.ImageInterface;
+
 import java.util.ArrayList;
 
-public class ImageManager {
+public class MainActivityPresenter {
     public ArrayList<ImageInterface> imageList = new ArrayList<>();
     private int currentImageIndex = 0;
     private TextView textView;
     private TextView timeView;
     private ImageView imageView;
 
-    ImageManager(TextView textView, TextView timeView, ImageView imageView){
+    public MainActivityPresenter(TextView textView, TextView timeView, ImageView imageView){
         this.textView = textView;
         this.timeView = timeView;
         this.imageView = imageView;

@@ -1,16 +1,15 @@
-package com.example.galleryapp7082;
+package com.example.galleryapp7082.view;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.lang.reflect.Array;
+import com.example.galleryapp7082.R;
 
 public class SearchGalleryActivity extends AppCompatActivity {
 
