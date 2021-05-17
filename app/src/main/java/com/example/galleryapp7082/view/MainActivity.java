@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MY_READ_PERMISSION_CODE = 101;
     private static final int MY_READ_LOCATION_CODE = 102;
-    private final String SD_PATH = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
+    private static String SD_PATH;
     private final ArrayList<File> files = new ArrayList<>();
     private View mLayout;
     private ImageView imageView;
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SD_PATH = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         setContentView(R.layout.activity_main);
         photoImageView = findViewById(R.id.imageView);
         mLayout = findViewById(R.id.main_layout);
