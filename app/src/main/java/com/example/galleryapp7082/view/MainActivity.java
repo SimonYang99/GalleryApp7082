@@ -25,6 +25,7 @@ import androidx.core.content.FileProvider;
 
 import com.example.galleryapp7082.R;
 import com.example.galleryapp7082.models.Image;
+import com.example.galleryapp7082.models.ImageFactory;
 import com.example.galleryapp7082.models.ImageInterface;
 import com.example.galleryapp7082.presenter.MainActivityPresenter;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
 
     private static final int MY_READ_PERMISSION_CODE = 101;
     private static final int MY_READ_LOCATION_CODE = 102;
+    private static String SD_PATH;
     private final ArrayList<File> files = new ArrayList<>();
     private View mLayout;
     private ImageView imageView;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private LocalDate time;
+    private ImageFactory imageFactory;
     String currTime = null;
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
 
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SD_PATH = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         setContentView(R.layout.activity_main);
         photoImageView = findViewById(R.id.imageView);
         mLayout = findViewById(R.id.main_layout);
@@ -79,19 +83,22 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
         currentImageIndex = 0;
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
+        imageFactory = new ImageFactory();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         manager = new MainActivityPresenter(textView, timestamp, imageView);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
-        } else {
-            getFiles();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1011);
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
-        }
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
+//        } else {
+//            getFiles();
+//        }
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
+//        }
 
     }
 
@@ -148,18 +155,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
     @Override
     public ArrayList<File> getFiles() {
         File[] filesArray;
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         files.clear();
         manager.clearImages();
 
-        File imgFile = new File(path);
+        File imgFile = new File(SD_PATH);
         filesArray = imgFile.listFiles();
 
         if (imgFile.exists()) {
             for (int i = filesArray.length - 1; i >= 0; i--) {
                 if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
                     files.add(filesArray[i]);
-                    ImageInterface img = new Image(filesArray[i],
+
+                    ImageInterface img = imageFactory.createImage(filesArray[i],
                             sharedPref.getString(filesArray[i].getName(), null),
                             sharedPref.getString(filesArray[i].getName() + "_time", null),
                             editor);
@@ -175,11 +182,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
     @Override
     public ArrayList<File> getFiles(String filter) {
         File[] filesArray;
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         files.clear();
         manager.clearImages();
 
-        File imgFile = new File(path);
+        File imgFile = new File(SD_PATH);
         filesArray = imgFile.listFiles();
 
         if (imgFile.exists()) {
@@ -203,12 +209,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
     @Override
     public ArrayList<File> getFiles(String beforeTime, String afterTime) {
         File[] filesArray;
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
 
         files.clear();
         manager.clearImages();
 
-        File imgFile = new File(path);
+        File imgFile = new File(SD_PATH);
         filesArray = imgFile.listFiles();
 
 
@@ -235,12 +240,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
 
     public ArrayList<File> getFilesLocationFilter(String longitude, String latitude) {
         File[] filesArray;
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
 
         files.clear();
         manager.clearImages();
 
-        File imgFile = new File(path);
+        File imgFile = new File(SD_PATH);
         filesArray = imgFile.listFiles();
 
 
@@ -373,8 +377,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
             getFiles(word);
         }
         else if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == SearchGalleryActivity.TIME_RESULT) {
-            String word = (data.getStringExtra(SearchGalleryActivity.EXTRA_REPLY));
-            getFiles(word);
+            String beforeTime = (data.getStringExtra(SearchGalleryActivity.BEFORE_REPLY));
+            String afterTime = (data.getStringExtra(SearchGalleryActivity.AFTER_REPLY));
+            getFiles(beforeTime, afterTime);
         }
         else if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == SearchGalleryActivity.LOCATION_RESULT) {
 
