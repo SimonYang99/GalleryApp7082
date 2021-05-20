@@ -15,6 +15,7 @@ public class Image implements ImageInterface {
         this.file = file;
         this.caption = caption;
         this.date = date;
+
     }
 
     public File getFile(){

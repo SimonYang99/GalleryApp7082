@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SD_PATH = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         setContentView(R.layout.activity_main);
+        SD_PATH = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
         photoImageView = findViewById(R.id.imageView);
         mLayout = findViewById(R.id.main_layout);
         captionEditText = findViewById(R.id.editCaption);
@@ -91,15 +91,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1011);
         }
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
-//        } else {
-//            getFiles();
-//        }
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
-//        }
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
+        } else {
+            getFiles();
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_READ_LOCATION_CODE);
+        }
     }
 
     public void onShare(View view) {
@@ -163,9 +162,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
 
         if (imgFile.exists()) {
             for (int i = filesArray.length - 1; i >= 0; i--) {
+
                 if (filesArray[i].getName().endsWith(".png") || filesArray[i].getName().endsWith(".jpg")) {
                     files.add(filesArray[i]);
-
                     ImageInterface img = imageFactory.createImage(filesArray[i],
                             sharedPref.getString(filesArray[i].getName(), null),
                             sharedPref.getString(filesArray[i].getName() + "_time", null),
@@ -296,11 +295,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
 
         // Create an image file name
         currTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
         String imageFileName = currTime + "_";
-        File imageFile = new File(Environment.getExternalStorageDirectory(), imageFileName);
 
-        Log.e("JOSH", Environment.getExternalStorageDirectory() + "");
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -308,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityPrese
                 storageDir      /* directory */
         );
 
-        editor.putString(imageFileName + "_time", currTime);
+        editor.putString(image.getName() + "_time", currTime);
         editor.apply();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
