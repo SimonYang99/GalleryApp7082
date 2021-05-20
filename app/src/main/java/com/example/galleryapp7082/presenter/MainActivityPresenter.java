@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.galleryapp7082.models.ImageInterface;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivityPresenter {
@@ -57,5 +58,11 @@ public class MainActivityPresenter {
 
     public ImageInterface getCurrentImage(){
         return this.imageList.get(currentImageIndex);
+    }
+
+    public interface View {
+        ArrayList<File> getFiles();
+        ArrayList<File> getFiles(String filter);
+        ArrayList<File> getFiles(String beforeTime, String afterTime);
     }
 }

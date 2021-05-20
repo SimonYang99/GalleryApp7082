@@ -39,7 +39,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityPresenter.View {
 
     static final int REQUEST_IMAGE_CAPTURE = 2;
     private ImageView photoImageView;
@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
+    @Override
     public ArrayList<File> getFiles() {
         File[] filesArray;
         String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         return files;
     }
 
+    @Override
     public ArrayList<File> getFiles(String filter) {
         File[] filesArray;
         String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
@@ -198,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
         return files;
     }
 
+    @Override
     public ArrayList<File> getFiles(String beforeTime, String afterTime) {
         File[] filesArray;
         String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
@@ -267,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
         manager.nextImage(0);
         return files;
     }
+
     public void setCaptionView() {
         manager.updateViewInfo();
     }
@@ -290,6 +294,9 @@ public class MainActivity extends AppCompatActivity {
         currTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         String imageFileName = currTime + "_";
+        File imageFile = new File(Environment.getExternalStorageDirectory(), imageFileName);
+
+        Log.e("JOSH", Environment.getExternalStorageDirectory() + "");
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -297,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                 storageDir      /* directory */
         );
 
-        editor.putString(image.getName() + "_time", currTime);
+        editor.putString(imageFileName + "_time", currTime);
         editor.apply();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -325,7 +332,6 @@ public class MainActivity extends AppCompatActivity {
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
 
     public void takePhoto(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
